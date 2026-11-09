@@ -32,6 +32,11 @@ impl Drop for Player {
 }
 
 fn create() -> libmpv2::Result<Mpv> {
+    // mpv exige LC_NUMERIC=C ; GTK (Tauri) positionne la locale du système.
+    #[cfg(unix)]
+    unsafe {
+        libc::setlocale(libc::LC_NUMERIC, c"C".as_ptr());
+    }
     Mpv::with_initializer(|init| {
         init.set_option("force-window", "yes")?;
         init.set_option("osc", "yes")?;
